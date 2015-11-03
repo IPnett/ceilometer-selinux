@@ -1,0 +1,109 @@
+policy_module(ceilometer, 0,1)
+attribute ceilometer_domain;
+
+ceilometer_basic_types_template(ceilometer_api)
+ceilometer_basic_types_template(ceilometer_agent_central)
+ceilometer_basic_types_template(ceilometer_agent_notification)
+ceilometer_basic_types_template(ceilometer_collector)
+ceilometer_basic_types_template(ceilometer_alarm_notifier)
+ceilometer_basic_types_template(ceilometer_alarm_evaluator)
+
+
+init_daemon_domain(ceilometer_api_t, ceilometer_api_exec_t)
+init_daemon_domain(ceilometer_agent_central_t, ceilometer_agent_central_exec_t)
+init_daemon_domain(ceilometer_agent_notification_t, ceilometer_agent_notification_exec_t)
+init_daemon_domain(ceilometer_collector_t, ceilometer_collector_exec_t)
+init_daemon_domain(ceilometer_alarm_notifier_t, ceilometer_alarm_notifier_exec_t)
+init_daemon_domain(ceilometer_alarm_evaluator_t, ceilometer_alarm_evaluator_exec_t)
+
+type ceilometer_var_lib_t;
+files_type(ceilometer_var_lib_t)
+
+type ceilometer_log_t;
+logging_log_file(ceilometer_log_t)
+
+type ceilometer_var_run_t;
+files_pid_file(ceilometer_var_run_t)
+
+type ceilometer_api_tmp_t;
+files_tmp_file(ceilometer_api_tmp_t)
+dev_read_urand(ceilometer_domain)
+
+#should be upstream in main policy. :(
+type ceilometer_api_port_t;
+
+
+
+###################
+#
+# Common local policy
+#
+
+#logs
+manage_dirs_pattern(ceilometer_domain, ceilometer_log_t, ceilometer_log_t)
+append_files_pattern(ceilometer_domain, ceilometer_log_t, ceilometer_log_t)
+create_files_pattern(ceilometer_domain, ceilometer_log_t, ceilometer_log_t)
+setattr_files_pattern(ceilometer_domain, ceilometer_log_t, ceilometer_log_t)
+
+manage_dirs_pattern(ceilometer_domain, ceilometer_var_lib_t, ceilometer_var_lib_t)
+manage_files_pattern(ceilometer_domain, ceilometer_var_lib_t, ceilometer_var_lib_t)
+
+manage_dirs_pattern(ceilometer_domain, ceilometer_var_run_t, ceilometer_var_run_t)
+manage_files_pattern(ceilometer_domain, ceilometer_var_run_t, ceilometer_var_run_t)
+
+
+corecmd_exec_bin(ceilometer_domain)
+corecmd_exec_shell(ceilometer_domain)
+
+dev_read_urand(ceilometer_domain)
+dev_read_sysfs(ceilometer_domain)
+libs_exec_ldconfig(ceilometer_domain)
+sysnet_dns_name_resolve(ceilometer_domain)
+dev_read_sysfs(ceilometer_domain)
+
+
+
+#############
+# 
+# celilometer_api_t;
+#
+corenet_port(ceilometer_api_port_t)
+allow ceilometer_api_t ceilometer_api_port_t:tcp_socket { name_bind };
+allow ceilometer_api_t self:tcp_socket { accept listen };
+corenet_tcp_connect_mongod_port(ceilometer_api_t)
+files_tmp_filetrans(ceilometer_api_t, ceilometer_api_tmp_t, dir)
+files_tmp_filetrans(ceilometer_api_t, ceilometer_api_tmp_t, file)
+manage_dirs_pattern(ceilometer_api_t, ceilometer_api_tmp_t, ceilometer_api_tmp_t)
+manage_files_pattern(ceilometer_api_t, ceilometer_api_tmp_t, ceilometer_api_tmp_t)
+
+
+############
+#
+# ceilometer_agent_notification_t
+#
+corenet_tcp_connect_amqp_port(ceilometer_agent_notification_t)
+
+###########
+#
+# ceilometer_collector_t
+#
+corenet_tcp_connect_mongod_port(ceilometer_collector_t)
+corenet_tcp_connect_amqp_port(ceilometer_collector_t)
+
+###########
+#
+# ceilometer-alarm-notifier
+#
+corenet_tcp_connect_amqp_port(ceilometer_alarm_notifier_t)
+
+
+
+
+#####
+# set all domains to permissive for test.
+#permissive ceilometer_api_t;
+#permissive ceilometer_agent_central_t;
+#permissive ceilometer_agent_notification_t;
+#permissive ceilometer_collector_t;
+#permissive ceilometer_alarm_notifier_t;
+#permissive ceilometer_alarm_evaluator_t;

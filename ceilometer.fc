@@ -1,0 +1,19 @@
+/usr/lib/systemd/system/openstack-ceilometer-api.*              --  gen_context(system_u:object_r:ceilometer_api_unit_file_t,s0)
+/usr/lib/systemd/system/openstack-ceilometer-alarm-evaluator.*         --  gen_context(system_u:object_r:ceilometer_alarm_evaluator_unit_file_t,s0)
+/usr/lib/systemd/system/openstack-ceilometer-alarm-notifier.*         --  gen_context(system_u:object_r:ceilometer_alarm_notifier_unit_file_t,s0)
+/usr/lib/systemd/system/openstack-ceilometer-central.*         --  gen_context(system_u:object_r:ceilometer_agent_central_unit_file_t,s0)
+/usr/lib/systemd/system/openstack-ceilometer-collector.*         --  gen_context(system_u:object_r:ceilometer_collector_unit_file_t,s0)
+/usr/lib/systemd/system/openstack-ceilometer-notification.*         --  gen_context(system_u:object_r:ceilometer_agent_notification_unit_file_t,s0)
+
+/usr/bin/ceilometer-api             --      gen_context(system_u:object_r:ceilometer_api_exec_t,s0)
+/usr/bin/ceilometer-agent-central        --      gen_context(system_u:object_r:ceilometer_agent_central_exec_t,s0)
+/usr/bin/ceilometer-agent-notification    --  gen_context(system_u:object_r:ceilometer_agent_notification_exec_t,s0)
+/usr/bin/ceilometer-alarm-notifier   --  gen_context(system_u:object_r:ceilometer_alarm_notifier_exec_t,s0)
+/usr/bin/ceilometer-alarm-evaluator   --  gen_context(system_u:object_r:ceilometer_alarm_evaluator_exec_t,s0)
+/usr/bin/ceilometer-collector    --  gen_context(system_u:object_r:ceilometer_collector_exec_t,s0)
+
+/var/lib/ceilometer(/.*)?   gen_context(system_u:object_r:ceilometer_var_lib_t,s0)
+/var/log/ceilometer(/.*)?   gen_context(system_u:object_r:ceilometer_log_t,s0)
+/var/run/ceilometer(/.*)?   gen_context(system_u:object_r:ceilometer_var_run_t,s0)
+
+
