@@ -1,4 +1,4 @@
-policy_module(ceilometer, 0,1)
+policy_module(ceilometer, 0,2)
 attribute ceilometer_domain;
 
 ceilometer_basic_types_template(ceilometer_api)
@@ -64,7 +64,7 @@ dev_read_sysfs(ceilometer_domain)
 
 
 #############
-# 
+#
 # celilometer_api_t;
 #
 corenet_port(ceilometer_api_port_t)
@@ -92,18 +92,23 @@ corenet_tcp_connect_amqp_port(ceilometer_collector_t)
 
 ###########
 #
-# ceilometer-alarm-notifier
+# ceilometer_alarm_notifier_t
 #
 corenet_tcp_connect_amqp_port(ceilometer_alarm_notifier_t)
 
+###########
+#
+# ceilometer_agent_central_t
+#
+corenet_tcp_connect_amqp_port(ceilometer_agent_central_t)
+corenet_tcp_connect_glance_port(ceilometer_agent_central_t)
+corenet_tcp_connect_neutron_port(ceilometer_agent_central_t)
+corenet_tcp_connect_osapi_compute_port(ceilometer_agent_central_t)
+
+############
+#
+# ceilometer_alarm_evaluator_t
+#
+allow ceilometer_alarm_evaluator_t ceilometer_api_port_t:tcp_socket name_connect;
 
 
-
-#####
-# set all domains to permissive for test.
-#permissive ceilometer_api_t;
-#permissive ceilometer_agent_central_t;
-#permissive ceilometer_agent_notification_t;
-#permissive ceilometer_collector_t;
-#permissive ceilometer_alarm_notifier_t;
-#permissive ceilometer_alarm_evaluator_t;
